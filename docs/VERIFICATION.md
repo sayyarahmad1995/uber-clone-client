@@ -66,3 +66,9 @@ Android debug APK built successfully and was installed on the Pixel 10 Pro API 3
 - All 44 tests pass and analyzer reports no issues.
 
 - Standard flutter build apk --release --no-pub succeeded without a Dart define or setup helper.
+
+## Location field stretch animation
+
+- Location field ink now paints on a local Material inside the scroll viewport, so its background participates in the same overscroll transform as its contents.
+- Regression reproduced before the fix; all 45 tests pass afterward, analyzer is clean, Android and web release builds succeed.
+

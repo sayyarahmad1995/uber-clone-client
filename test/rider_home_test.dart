@@ -30,6 +30,25 @@ Future<void> openRider(
 }
 
 void main() {
+  testWidgets('location field paints inside the animated scroll viewport', (
+    tester,
+  ) async {
+    await openRider(tester);
+    final field = find.byKey(const Key('destination-search'));
+    final context = tester.element(field);
+    final material = context.findAncestorWidgetOfExactType<Material>();
+    final viewport = find.descendant(
+      of: find.byKey(const Key('destination-panel')),
+      matching: find.byType(Viewport),
+    );
+    expect(
+      find.descendant(of: viewport, matching: find.byWidget(material!)),
+      findsOneWidget,
+    );
+    await tester.drag(field, const Offset(0, -400));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('desktop mouse dragging expands the destination panel', (
     tester,
   ) async {

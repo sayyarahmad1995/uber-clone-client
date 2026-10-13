@@ -75,60 +75,63 @@ class DestinationPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            InkWell(
-              key: const Key('destination-search'),
-              onTap: onSearch,
-              borderRadius: BorderRadius.circular(14),
-              child: Ink(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF6F7FD),
-                  border: Border.all(color: const Color(0xFFE0E2ED)),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.location_on_rounded,
-                      color: hiGoPurple,
-                      size: 27,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            destination?.name ?? 'Current location',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Text(
-                            destination?.address ?? demoPickup.address,
-                            style: const TextStyle(
-                              color: Color(0xFF8B91A6),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+            Material(
+              type: MaterialType.transparency,
+              child: InkWell(
+                key: const Key('destination-search'),
+                onTap: onSearch,
+                borderRadius: BorderRadius.circular(14),
+                child: Ink(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF6F7FD),
+                    border: Border.all(color: const Color(0xFFE0E2ED)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on_rounded,
+                        color: hiGoPurple,
+                        size: 27,
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 1,
-                      height: 24,
-                      color: const Color(0xFFD9DDEB),
-                    ),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.search_rounded, size: 25),
-                  ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              destination?.name ?? 'Current location',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              destination?.address ?? demoPickup.address,
+                              style: const TextStyle(
+                                color: Color(0xFF8B91A6),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 1,
+                        height: 24,
+                        color: const Color(0xFFD9DDEB),
+                      ),
+                      const SizedBox(width: 12),
+                      const Icon(Icons.search_rounded, size: 25),
+                    ],
+                  ),
                 ),
               ),
             ),
