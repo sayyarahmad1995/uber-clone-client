@@ -169,5 +169,9 @@ void main() {
     await tester.enterText(find.byKey(const Key('password')), 'Example8!');
     await revealAndTap(tester, find.byKey(const Key('submit-login')));
     expect(find.text('Login demo'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('enter-rider-preview')));
+    await tester.pumpAndSettle();
+    expect(find.text('Where to?'), findsOneWidget);
+    expect(find.byKey(const Key('nav-home')), findsOneWidget);
   });
 }

@@ -3,6 +3,7 @@ import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'theme.dart';
+import 'rider/rider_home_page.dart';
 
 class HiGoApp extends StatelessWidget {
   const HiGoApp({super.key});
@@ -15,6 +16,7 @@ class HiGoApp extends StatelessWidget {
       '/': (_) => const HomePage(),
       '/login': (_) => const LoginPage(),
       '/register': (_) => const RegisterPage(),
+      '/rider': (_) => const RiderHomePage(),
     },
   );
 }

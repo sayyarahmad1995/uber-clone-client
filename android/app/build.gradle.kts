@@ -1,8 +1,14 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val mapsSecrets = Properties()
+val mapsSecretsFile = rootProject.file("secretes.properties")
+if (mapsSecretsFile.exists()) mapsSecretsFile.inputStream().use { mapsSecrets.load(it) }
 
 android {
     namespace = "com.higo.higo_countrycode"
@@ -19,7 +25,8 @@ android {
         applicationId = "com.higo.higo_countrycode"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = maxOf(flutter.minSdkVersion, 24)
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = mapsSecrets.getProperty("GOOGLE_MAPS_API_KEY", "")
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

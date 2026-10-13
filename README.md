@@ -60,3 +60,9 @@ The background is the original `Gemini_Generated_Image_zh2im2zh2im2zh2i.png` alr
 Packages and resolved versions are recorded in `pubspec.lock`. `country_picker` and `phone_numbers_parser` are MIT licensed. `cupertino_icons` provides font resources referenced by the picker. Flutter's runtime license registry also includes dependency licenses.
 
 Visual differences from FlutterFlow: obvious spelling errors are corrected; the previously empty phone selector now shows a flag and dial code; the forms scroll when space is constrained, including with larger text and keyboards. Pages slide up when opened and down when returning. Footer spacing is 8 logical pixels plus the system safe area; surplus height goes into the photo header. A centered mobile-width layout is used on wide windows. Platform launch icons remain Flutter's generated defaults.
+
+## Rider home preview
+
+The rider screen adds a real Google Map, three-position draggable destination panel, local sample-place search, editable Home/Work shortcuts, schedule preview, and Home/Activity/Wallet/Profile navigation. Complete valid demo login and choose **Continue to rider preview**, or launch with "--route=/rider".
+
+Configure maps through the ignored **android/secretes.properties** file; see [map setup](docs/maps-setup.md) for commands. The Go backend remains unconnected. Saved addresses and schedules last only for this app session; they are UI previews and do not create rides.

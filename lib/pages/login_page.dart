@@ -85,10 +85,32 @@ class _LoginPageState extends State<LoginPage> {
             onPressed: () {
               FocusScope.of(context).unfocus();
               if (_formKey.currentState!.validate()) {
-                showDemoNotice(
-                  context,
-                  'Login demo',
-                  'Your form is valid. No authentication request was sent.',
+                showDialog<void>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: const Text('Login demo'),
+                    content: const Text(
+                      'Your form is valid. No authentication request was sent.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        key: const Key('enter-rider-preview'),
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/rider',
+                            (route) => false,
+                          );
+                        },
+                        child: const Text('Continue to rider preview'),
+                      ),
+                    ],
+                  ),
                 );
               }
             },
