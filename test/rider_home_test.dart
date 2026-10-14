@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'fake_places.dart';
+import 'package:higo_countrycode/rider/rider_demo_data.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:higo_countrycode/rider/rider_home_page.dart';
@@ -22,6 +24,8 @@ Future<void> openRider(
         child: child!,
       ),
       home: RiderHomePage(
+        placesRepository: FakePlaces(),
+        recentPlaces: demoPlaces,
         mapBuilder: (_, _, _, _) => const ColoredBox(color: Color(0xFFE6EFEB)),
       ),
     ),
@@ -98,6 +102,8 @@ void main() {
         find.text('Islamabad International Airport').hitTestable(),
         findsOneWidget,
       );
+      await tester.ensureVisible(find.byKey(const Key('sheet-handle')));
+      await tester.pumpAndSettle();
       await tester.drag(
         find.byKey(const Key('sheet-handle')),
         const Offset(0, 700),

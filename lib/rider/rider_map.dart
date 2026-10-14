@@ -18,12 +18,13 @@ class RiderMap extends StatefulWidget {
     required this.recenterRequest,
     this.northUpRequest = 0,
     this.destination,
+    this.pickup,
     this.configured = GoogleMapsConfiguration.mapsEnabled,
   });
   final double bottomInset;
   final int recenterRequest;
   final int northUpRequest;
-  final RiderPlace? destination;
+  final RiderPlace? destination, pickup;
   final bool configured;
   @override
   State<RiderMap> createState() => _RiderMapState();
@@ -187,12 +188,19 @@ class _RiderMapState extends State<RiderMap> {
                 markers: {
                   Marker(
                     markerId: const MarkerId('pickup'),
-                    position: _center,
+                    position: widget.pickup == null
+                        ? _center
+                        : LatLng(
+                            widget.pickup!.latitude,
+                            widget.pickup!.longitude,
+                          ),
                     icon: _dot ?? BitmapDescriptor.defaultMarker,
                     anchor: const Offset(.5, .5),
-                    infoWindow: const InfoWindow(
-                      title: 'F-8 preview location',
-                      snippet: 'Sample position; GPS is not enabled',
+                    infoWindow: InfoWindow(
+                      title: widget.pickup?.name ?? 'F-8 map center',
+                      snippet:
+                          widget.pickup?.address ??
+                          'Choose your pickup location',
                     ),
                   ),
                   if (_car != null)

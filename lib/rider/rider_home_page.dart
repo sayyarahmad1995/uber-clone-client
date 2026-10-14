@@ -7,6 +7,9 @@ import 'rider_demo_data.dart';
 import 'rider_map.dart';
 import 'destination_search_page.dart';
 import 'rider_preview_sheets.dart';
+import 'trip_locations.dart';
+import 'places_api.dart';
+import 'route_preview_page.dart';
 
 typedef RiderMapBuilder =
     Widget Function(
@@ -17,8 +20,15 @@ typedef RiderMapBuilder =
     );
 
 class RiderHomePage extends StatefulWidget {
-  const RiderHomePage({super.key, this.mapBuilder});
+  const RiderHomePage({
+    super.key,
+    this.mapBuilder,
+    this.placesRepository,
+    this.recentPlaces = const [],
+  });
   final RiderMapBuilder? mapBuilder;
+  final PlacesRepository? placesRepository;
+  final List<RiderPlace> recentPlaces;
   @override
   State<RiderHomePage> createState() => _RiderHomePageState();
 }
@@ -29,7 +39,8 @@ class _RiderHomePageState extends State<RiderHomePage> {
   double _extent = .52;
   int _tab = 0, _recenterRequest = 0;
   int _northUpRequest = 0;
-  RiderPlace? _destination;
+  RiderPlace? _destination, _pickup;
+  late final List<RiderPlace> _recentPlaces = [...widget.recentPlaces];
   String? _homeAddress, _workAddress;
   DateTime? _schedule;
   @override
@@ -43,12 +54,45 @@ class _RiderHomePageState extends State<RiderHomePage> {
     duration: const Duration(milliseconds: 300),
     curve: Curves.easeOutCubic,
   );
-  Future<void> _search() async {
-    final place = await Navigator.push<RiderPlace>(
+  Future<void> _search({bool pickup = false, String query = ''}) async {
+    final locations = await Navigator.push<TripLocations>(
       context,
-      MaterialPageRoute(builder: (_) => const DestinationSearchPage()),
+      MaterialPageRoute(
+        builder: (_) => DestinationSearchPage(
+          repository: widget.placesRepository,
+          initialPickup: _pickup,
+          initialQuery: query,
+          initialDestination: _destination,
+          editPickup: pickup,
+          recentPlaces: _recentPlaces,
+        ),
+      ),
     );
-    if (place != null && mounted) _select(place);
+    if (locations == null || !mounted) return;
+    setState(() {
+      _pickup = locations.pickup;
+      _destination = locations.destination;
+      for (final place in [locations.pickup, locations.destination]) {
+        _recentPlaces.removeWhere((entry) => entry.id == place.id);
+        _recentPlaces.insert(0, place);
+      }
+      if (_recentPlaces.length > 10) {
+        _recentPlaces.removeRange(10, _recentPlaces.length);
+      }
+    });
+    _select(locations.destination);
+    await Navigator.push<void>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RoutePreviewPage(
+          locations: locations,
+          onEdit: (updated) => setState(() {
+            _pickup = updated.pickup;
+            _destination = updated.destination;
+          }),
+        ),
+      ),
+    );
   }
 
   void _select(RiderPlace place) {
@@ -65,7 +109,7 @@ class _RiderHomePageState extends State<RiderHomePage> {
 
   Future<void> _shortcut(String id) async {
     if (id == 'airport') {
-      _select(demoPlaces[2]);
+      await _search(query: 'Islamabad International Airport');
       return;
     }
     if (id == 'schedule') {
@@ -122,6 +166,7 @@ class _RiderHomePageState extends State<RiderHomePage> {
                               destination: _destination,
                               recenterRequest: _recenterRequest,
                               northUpRequest: _northUpRequest,
+                              pickup: _pickup,
                             ),
                       ),
                       if (_extent < .76)
@@ -259,6 +304,9 @@ class _RiderHomePageState extends State<RiderHomePage> {
                             return DestinationPanel(
                               scrollController: scrollController,
                               destination: _destination,
+                              pickup: _pickup,
+                              onPickup: () => _search(pickup: true),
+                              recentPlaces: _recentPlaces,
                               homeAddress: _homeAddress,
                               workAddress: _workAddress,
                               scheduleLabel: _schedule == null

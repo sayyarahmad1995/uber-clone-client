@@ -4,9 +4,11 @@ class RiderPlace {
     this.name,
     this.address,
     this.latitude,
-    this.longitude,
-  );
+    this.longitude, {
+    this.placeId,
+  });
   final String id, name, address;
+  final String? placeId;
   final double latitude, longitude;
 }
 

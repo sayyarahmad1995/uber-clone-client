@@ -13,6 +13,9 @@ class DestinationPanel extends StatelessWidget {
     required this.onShortcut,
     required this.onExpand,
     this.destination,
+    this.pickup,
+    this.recentPlaces = const [],
+    this.onPickup,
     this.homeAddress,
     this.workAddress,
     this.scheduleLabel,
@@ -21,7 +24,9 @@ class DestinationPanel extends StatelessWidget {
   final VoidCallback onSearch, onExpand;
   final ValueChanged<RiderPlace> onPlace;
   final ValueChanged<String> onShortcut;
-  final RiderPlace? destination;
+  final RiderPlace? destination, pickup;
+  final List<RiderPlace> recentPlaces;
+  final VoidCallback? onPickup;
   final String? homeAddress, workAddress, scheduleLabel;
 
   @override
@@ -104,7 +109,9 @@ class DestinationPanel extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              destination?.name ?? 'Current location',
+                              destination?.name ??
+                                  pickup?.name ??
+                                  'Choose your pickup',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -113,7 +120,9 @@ class DestinationPanel extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              destination?.address ?? demoPickup.address,
+                              destination?.address ??
+                                  pickup?.address ??
+                                  'Search or use your current location',
                               style: const TextStyle(
                                 color: Color(0xFF8B91A6),
                                 fontSize: 12,
@@ -135,6 +144,16 @@ class DestinationPanel extends StatelessWidget {
                 ),
               ),
             ),
+            if (pickup != null)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Pickup'),
+                subtitle: Text(pickup!.name),
+                trailing: TextButton(
+                  onPressed: onPickup,
+                  child: const Text('Change'),
+                ),
+              ),
             if (destination != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -225,9 +244,9 @@ class DestinationPanel extends StatelessWidget {
                 ),
               ],
             ),
-            for (final place in demoPlaces.take(3)) ...[
+            for (final place in recentPlaces.take(3)) ...[
               PlaceTile(place: place, onTap: () => onPlace(place)),
-              if (place != demoPlaces[2])
+              if (place != recentPlaces.take(3).last)
                 const Padding(
                   padding: EdgeInsets.only(left: 50),
                   child: Divider(height: 1, color: Color(0xFFF0F1F6)),
@@ -235,7 +254,7 @@ class DestinationPanel extends StatelessWidget {
             ],
             const SizedBox(height: 10),
             const Text(
-              'Sample places for your preview',
+              'Your recent selections appear here',
               style: TextStyle(fontSize: 11, color: Color(0xFF8B91A6)),
             ),
           ],

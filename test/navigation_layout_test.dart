@@ -4,7 +4,7 @@ import 'package:higo_countrycode/app.dart';
 
 void main() {
   testWidgets(
-    'registration enters upward without horizontal movement and returns downward',
+    'registration enters from the right and returns without vertical movement',
     (tester) async {
       tester.view.physicalSize = const Size(412, 940);
       tester.view.devicePixelRatio = 1;
@@ -16,14 +16,14 @@ void main() {
       final duringPush = tester.getTopLeft(find.text('Create Your Account'));
       await tester.pumpAndSettle();
       final settled = tester.getTopLeft(find.text('Create Your Account'));
-      expect(duringPush.dx, closeTo(settled.dx, .01));
-      expect(duringPush.dy, greaterThan(settled.dy + 40));
+      expect(duringPush.dy, closeTo(settled.dy, .01));
+      expect(duringPush.dx, greaterThan(settled.dx + 40));
       await tester.binding.handlePopRoute();
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       final duringPop = tester.getTopLeft(find.text('Create Your Account'));
-      expect(duringPop.dx, closeTo(settled.dx, .01));
-      expect(duringPop.dy, greaterThan(settled.dy + 40));
+      expect(duringPop.dy, closeTo(settled.dy, .01));
+      expect(duringPop.dx, greaterThan(settled.dx + 40));
       await tester.pumpAndSettle();
       expect(find.text('Welcome to HiGO'), findsOneWidget);
     },

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'fake_places.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:higo_countrycode/rider/destination_search_page.dart';
 import 'package:higo_countrycode/rider/rider_preview_sheets.dart';
-import 'package:higo_countrycode/rider/rider_demo_data.dart';
 import 'package:higo_countrycode/theme.dart';
 import 'rider_home_test.dart' show openRider;
 
@@ -15,13 +15,25 @@ void main() {
       await tester.pumpAndSettle();
       tester.view.viewInsets = const FakeViewPadding(bottom: 240);
       await tester.enterText(find.byKey(const Key('place-query')), 'safa');
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Safa Gold Mall'),
+        160,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const Key('location-search-scroll')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       await tester.pumpAndSettle();
       expect(find.text('Safa Gold Mall').hitTestable(), findsOneWidget);
       expect(tester.takeException(), isNull);
       tester.view.viewInsets = const FakeViewPadding();
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
-      expect(find.text('Current location'), findsOneWidget);
+      expect(find.text('Choose your pickup'), findsOneWidget);
     },
   );
   testWidgets('saving a future schedule updates only the local shortcut', (
@@ -40,45 +52,59 @@ void main() {
   });
   testWidgets('search ignores case and reports empty results', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(theme: hiGoTheme, home: const DestinationSearchPage()),
+      MaterialApp(
+        theme: hiGoTheme,
+        home: DestinationSearchPage(repository: FakePlaces()),
+      ),
     );
     await tester.enterText(find.byKey(const Key('place-query')), 'SAFA');
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
     expect(find.text('Safa Gold Mall'), findsOneWidget);
     expect(find.text('Centaurus Mall'), findsNothing);
     await tester.enterText(find.byKey(const Key('place-query')), 'not a place');
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
     expect(find.text('No matching places'), findsOneWidget);
   });
   testWidgets(
-    'selecting a search result updates the panel and survives tab navigation',
+    'selecting a destination keeps pickup editable before continuing',
     (tester) async {
       await openRider(tester);
       await tester.tap(find.byKey(const Key('destination-search')));
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const Key('place-query')), 'safa');
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Safa Gold Mall'),
+        160,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const Key('location-search-scroll')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       await tester.tap(find.text('Safa Gold Mall'));
       await tester.pumpAndSettle();
-      expect(find.text('Destination preview · No ride booked'), findsOneWidget);
+      expect(find.byKey(const Key('pickup-query')), findsOneWidget);
       expect(
-        find.descendant(
-          of: find.byKey(const Key('destination-search')),
-          matching: find.text('Safa Gold Mall'),
-        ),
-        findsOneWidget,
+        tester
+            .widget<TextField>(find.byKey(const Key('place-query')))
+            .controller!
+            .text,
+        'Safa Gold Mall',
       );
-      await tester.tap(find.byKey(const Key('nav-activity')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('nav-home')));
-      await tester.pumpAndSettle();
       expect(
-        find.descendant(
-          of: find.byKey(const Key('destination-search')),
-          matching: find.text('Safa Gold Mall'),
-        ),
-        findsOneWidget,
+        tester
+            .widget<FilledButton>(find.byKey(const Key('confirm-locations')))
+            .onPressed,
+        isNull,
       );
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Choose your pickup'), findsOneWidget);
     },
   );
   testWidgets(
@@ -117,20 +143,23 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Plan a ride'), findsOneWidget);
   });
-  testWidgets('airport shortcut selects the sample airport without booking', (
-    tester,
-  ) async {
-    await openRider(tester);
-    await tester.ensureVisible(find.byKey(const Key('shortcut-airport')));
-    await tester.tap(find.byKey(const Key('shortcut-airport')));
-    await tester.pumpAndSettle();
-    expect(
-      find.descendant(
-        of: find.byKey(const Key('destination-search')),
-        matching: find.text(demoPlaces[2].name),
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Destination preview · No ride booked'), findsOneWidget);
-  });
+  testWidgets(
+    'airport shortcut searches live places rather than selecting sample coordinates',
+    (tester) async {
+      await openRider(tester);
+      await tester.ensureVisible(find.byKey(const Key('shortcut-airport')));
+      await tester.tap(find.byKey(const Key('shortcut-airport')));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('place-query')))
+            .controller!
+            .text,
+        'Islamabad International Airport',
+      );
+      expect(find.byKey(const Key('pickup-query')), findsOneWidget);
+    },
+  );
 }
