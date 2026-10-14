@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'slide_up_transition.dart';
+import 'slide_left_transition.dart';
 
 const hiGoPurple = Color(0xFF4834F4);
 const hiGoNavy = Color(0xFF111445);
@@ -9,12 +9,12 @@ final hiGoTheme = ThemeData(
   fontFamily: 'Poppins',
   pageTransitionsTheme: const PageTransitionsTheme(
     builders: {
-      TargetPlatform.android: SlideUpPageTransitionsBuilder(),
-      TargetPlatform.iOS: SlideUpPageTransitionsBuilder(),
-      TargetPlatform.macOS: SlideUpPageTransitionsBuilder(),
-      TargetPlatform.windows: SlideUpPageTransitionsBuilder(),
-      TargetPlatform.linux: SlideUpPageTransitionsBuilder(),
-      TargetPlatform.fuchsia: SlideUpPageTransitionsBuilder(),
+      TargetPlatform.android: SlideLeftPageTransitionsBuilder(),
+      TargetPlatform.iOS: SlideLeftPageTransitionsBuilder(),
+      TargetPlatform.macOS: SlideLeftPageTransitionsBuilder(),
+      TargetPlatform.windows: SlideLeftPageTransitionsBuilder(),
+      TargetPlatform.linux: SlideLeftPageTransitionsBuilder(),
+      TargetPlatform.fuchsia: SlideLeftPageTransitionsBuilder(),
     },
   ),
   colorScheme: ColorScheme.fromSeed(seedColor: hiGoPurple).copyWith(

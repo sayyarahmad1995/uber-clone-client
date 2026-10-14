@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SlideUpPageTransitionsBuilder extends PageTransitionsBuilder {
-  const SlideUpPageTransitionsBuilder();
+class SlideLeftPageTransitionsBuilder extends PageTransitionsBuilder {
+  const SlideLeftPageTransitionsBuilder();
 
   @override
   Widget buildTransitions<T>(
@@ -15,7 +15,7 @@ class SlideUpPageTransitionsBuilder extends PageTransitionsBuilder {
     return SlideTransition(
       position: animation
           .drive(CurveTween(curve: Curves.easeInOutCubic))
-          .drive(Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)),
+          .drive(Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)),
       child: child,
     );
   }

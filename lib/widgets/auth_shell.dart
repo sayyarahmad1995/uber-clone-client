@@ -33,7 +33,11 @@ class AuthShell extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) => Stack(
             children: [
-              Positioned.fill(
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: MediaQuery.sizeOf(context).height,
                 child: Image.asset(
                   'assets/images/higo-background.png',
                   fit: BoxFit.cover,
